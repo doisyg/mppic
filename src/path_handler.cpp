@@ -29,7 +29,7 @@ auto PathHandler::getGlobalPlanConsideringBounds(
   auto end = global_plan_.poses.end();
 
   auto closest_pose_upper_bound =
-    nav2_util::geometry_utils::first_after_integrated_distance(
+    utils::first_after_integrated_distance(
     global_plan_.poses.begin(), global_plan_.poses.end(), max_robot_pose_search_dist_);
 
   // Find closest point to the robot

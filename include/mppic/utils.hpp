@@ -14,13 +14,33 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "tf2/utils.h"
-#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.h"
+#include "nav2_util/geometry_utils.hpp"
 
 namespace mppi::utils {
 
 struct ControlConstraints {
   double vx, vy, vw;
 };
+
+/**
+ * Find first element in iterator that is greater integrated distance than comparevalue
+ */
+template<typename Iter, typename Getter>
+inline Iter first_after_integrated_distance(Iter begin, Iter end, Getter getCompareVal)
+{
+  if (begin == end) {
+    return end;
+  }
+  Getter dist = 0.0;
+  for (Iter it = begin; it != end - 1; it++) {
+    dist += nav2_util::geometry_utils::euclidean_distance(*it, *(it + 1));
+    if (dist > getCompareVal) {
+      return it + 1;
+    }
+  }
+  return end;
+}
 
 template <typename NodeT>
 auto getParamGetter(NodeT node, const std::string& name) {
